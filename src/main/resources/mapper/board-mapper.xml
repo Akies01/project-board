@@ -3,36 +3,36 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="Board">
-    <!--掲示板-->
+    <!--掲示板クエリー-->
     <insert id="save" parameterType="board" useGeneratedKeys="true" keyProperty="id">
         insert into board_table(boardTitle, boardWriter, boardPass, boardContents)
             values(#{boardTitle}, #{boardWriter}, #{boardPass}, #{boardContents})
     </insert>
 
-    <!--リスト情報-->
+    <!--リスト情報クエリー-->
     <select id="findAll" resultType="board">
         select id, boardTitle, boardWriter, boardHits, date_format(createdAt, "%Y-%m-%d") as createdAt
         from board_table order by id desc
     </select>
 
-    <!--ビュー-->
+    <!--ビュークエリー-->
     <update id="updateHits" parameterType="Long">
         update board_table set boardHits=boardHits+1 where id=#{id}
     </update>
 
-    <!--詳細-->
+    <!--詳細クエリー-->
     <select id="findById" parameterType="Long" resultType="board">
         select id, boardTitle, boardWriter, boardPass, boardContents, boardHits,
         date_format(createdAt, "%Y-%m-%d %H:%i:%s") as createdAt
         from board_table where id=#{id}
     </select>
 
-    <!--アップデート-->
+    <!--アップデートクエリー-->
     <update id="update">
         update board_table set boardTitle=#{boardTitle}, boardContents=#{boardContents} where id=#{id}
     </update>
 
-    <!--削除-->
+    <!--削除クエリー-->
     <!--習慣性 *表記 主義!!!-->
     <delete id="delete" parameterType="Long">
         delete from board_table where id=#{id}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>ログイン</title>
+</head>
+<body>
+<h2>ログイン</h2>
+<div th:if="${loginError}">
+    <script type="text/javascript">
+        alert('ユーザー名またはパスワードが無効です');
+    </script>
+</div>
+<form th:action="@{/login}" th:object="${userDTO}" method="post">
+    <div>
+        <label>ユーザー名:</label>
+        <input type="text" th:field="*{username}" />
+    </div>
+    <div>
+        <label>パスワード:</label>
+        <input type="password" th:field="*{password}" />
+    </div>
+    <div>
+        <button type="submit">ログイン</button>
+    </div>
+</form>
+<a href="/" style="margin-right: 10px;">ホーム</a>
+</body>
+</html>

@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 
 public class BoardDTO {
-    private Long id;// 文番号
+    private Long id;// id
     private String boardWriter; // 作成者
     private String boardPass; // 掲示文パスワード
     private String boardTitle; // 題目

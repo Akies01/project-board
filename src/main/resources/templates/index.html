@@ -1,12 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>index</title>
+    <title>Index</title>
 </head>
 <body>
 <h2>test</h2>
-<a href="/save">作成</a>
-<a href="/save">リスト</a>
+<nav>
+    <a href="/save">作成</a>
+    <a href="/list">リスト</a>
+    <a th:if="${isLoggedIn}" href="/logout">ログアウト</a>
+    <a th:if="${!isLoggedIn}" href="/registration">新規登録</a>
+    <a th:if="${!isLoggedIn}" href="/login">ログイン</a>
+</nav>
+<div th:if="${isLoggedIn}">
+    <p>ログイン: <span th:text="${username}"></span></p>
+</div>
 </body>
 </html>

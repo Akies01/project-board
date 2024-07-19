@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="User">
+    <!-- 使用者セーフクエリー -->
+    <insert id="save" parameterType="com.example.board.dto.UserDTO" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (username, password)
+        VALUES (#{username}, #{password})
+    </insert>
+
+    <!-- 使用者照会クエリー -->
+    <select id="findByUsername" parameterType="string" resultType="com.example.board.dto.UserDTO">
+        SELECT id, username, password
+        FROM users
+        WHERE username = #{username}
+    </select>
+
+    <!-- 全体使用者照会クエリー -->
+    <select id="findAll" resultType="com.example.board.dto.UserDTO">
+        SELECT id, username, password
+        FROM users
+    </select>
+</mapper>

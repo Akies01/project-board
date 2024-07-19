@@ -51,7 +51,7 @@ public class BoardController {
         BoardDTO boardDTO = boardService.findById(id);
         model.addAttribute("board", boardDTO);
         // detail test
-        System.out.println("boardDTO = " + boardDTO);
+        // System.out.println("boardDTO = " + boardDTO);
         return "detail";
     }
 
