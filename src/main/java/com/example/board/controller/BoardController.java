@@ -1,14 +1,14 @@
 package com.example.board.controller;
 
 import com.example.board.dto.BoardDTO;
+import com.example.board.dto.CommentDTO;
+import com.example.board.dto.PageDTO;
 import com.example.board.service.BoardService;
+import com.example.board.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,6 +17,7 @@ import java.util.List;
 
 public class BoardController {
     private final BoardService boardService;
+    private final CommentService commentService;
 
     // セーブ
     @GetMapping("/save")
@@ -52,6 +53,8 @@ public class BoardController {
         model.addAttribute("board", boardDTO);
         // detail test
         // System.out.println("boardDTO = " + boardDTO);
+        List<CommentDTO> commentDTOList = commentService.findAll(id);
+        model.addAttribute("commentList", commentDTOList);
         return "detail";
     }
 
@@ -76,5 +79,17 @@ public class BoardController {
     public String delete(@PathVariable("id") Long id) {
         boardService.delete(id);
         return "redirect:/list";
+    }
+
+    //ページング
+    @GetMapping("/paging")
+    public String pagingList(Model model, @RequestParam(value = "page", required = false, defaultValue = "1")int page) {
+        // System.out.println("page = " + page);
+        List<BoardDTO> pagingList = boardService.pagingList(page);
+        // System.out.println("pagingList = " + pagingList);
+        PageDTO PageDTO = boardService.pagingParam(page);
+        model.addAttribute("boardList", pagingList);
+        model.addAttribute("paging", PageDTO);
+        return "paging";
     }
 }

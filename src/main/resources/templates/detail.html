@@ -2,7 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>detail</title>
+    <script
+            src="https://code.jquery.com/jquery-3.7.1.js"
+            integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4="
+            crossorigin="anonymous"></script>
+    <title>詳細</title>
     <style>
         table, tr, td, th {
             border: 1px solid black;
@@ -24,11 +28,11 @@
         <td th:text="${board.boardTitle}"></td>
     </tr>
     <tr>
-        <th>作成者	</th>
+        <th>作成者</th>
         <td th:text="${board.boardWriter}"></td>
     </tr>
     <tr>
-        <th>作成時間	</th>
+        <th>作成時間</th>
         <td th:text="${board.createdAt}"></td>
     </tr>
     <tr>
@@ -43,6 +47,28 @@
 <button onclick="listReq()">目録</button>
 <button onclick="updateReq()">修整</button>
 <button onclick="deleteReq()">削除</button>
+
+<div>
+    <input type="text" id="commentWriter" placeholder="作成者">
+    <input type="text" id="commentContents" placeholder="内容">
+    <button id="comment-write-btn" onclick="commentWrite()">作成</button>
+</div>
+<div id="comment-list">
+    <table>
+        <tr>
+            <th>コメント番号</th>
+            <th>作成者</th>
+            <th>内容</th>
+            <th>作成時間</th>
+        </tr>
+        <tr th:each="comment : ${commentList}">
+            <td th:text="${comment.id}"></td>
+            <td th:text="${comment.commentWriter}"></td>
+            <td th:text="${comment.commentContents}"></td>
+            <td th:text="${comment.commentCreatedTime}"></td>
+        </tr>
+    </table>
+</div>
 </body>
 <script th:inline="javascript">
     const listReq = () => {
@@ -54,6 +80,55 @@
 
     const deleteReq = () => {
         location.href = `/delete/[[${board.id}]]`;
+    }
+
+    const commentWrite = () => {
+        const writer = document.getElementById("commentWriter").value;
+        const contents = document.getElementById("commentContents").value;
+        const board = [[${board.id}]];
+        $.ajax({
+            type: "post",
+            url: "/comment/save",
+            data: {
+                commentWriter: writer,
+                commentContents: contents,
+                boardId: board
+            },
+            dataType: "json",
+            success: function(commentList) {
+                console.log("作成成功");
+                console.log(commentList);
+                let output = "<table>";
+                output += "<tr><th>コメント番号</th>";
+                output += "<th>作成者</th>";
+                output += "<th>内容</th>";
+                output += "<th>作成時間</th></tr>";
+                for(let i in commentList){
+                    output += "<tr>";
+                    output += "<td>"+commentList[i].id+"</td>";
+                    output += "<td>"+commentList[i].commentWriter+"</td>";
+                    output += "<td>"+commentList[i].commentContents+"</td>";
+                    let createdTime = new Date(commentList[i].commentCreatedTime);
+                    let formattedTime = createdTime.toLocaleString('ja-JP', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                    });
+                    output += "<td>"+formattedTime+"</td>";
+                    output += "</tr>";
+                }
+                output += "</table>";
+                document.getElementById('comment-list').innerHTML = output;
+                document.getElementById('commentWriter').value='';
+                document.getElementById('commentContents').value='';
+            },
+            error: function() {
+                console.log("失敗");
+            }
+        });
     }
 </script>
 </html>

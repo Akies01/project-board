@@ -4,5 +4,6 @@
 <configuration>
     <typeAliases>
         <typeAlias alias="board" type="com.example.board.dto.BoardDTO"/>
+        <typeAlias alias="comment" type="com.example.board.dto.CommentDTO"/>
     </typeAliases>
 </configuration>
