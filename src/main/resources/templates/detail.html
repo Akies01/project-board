@@ -24,7 +24,7 @@
         <td th:text="${board.id}"></td>
     </tr>
     <tr>
-        <th>題目</th>
+        <th>タイトル</th>
         <td th:text="${board.boardTitle}"></td>
     </tr>
     <tr>
@@ -44,7 +44,7 @@
         <td th:text="${board.boardContents}"></td>
     </tr>
 </table>
-<button onclick="listReq()">目録</button>
+<button onclick="listReq()">リスト</button>
 <button onclick="updateReq()">修整</button>
 <button onclick="deleteReq()">削除</button>
 
@@ -72,7 +72,7 @@
 </body>
 <script th:inline="javascript">
     const listReq = () => {
-        location.href = "/list";
+        location.href = "/paging";
     }
     const updateReq = () => {
         location.href = `/update/[[${board.id}]]`;

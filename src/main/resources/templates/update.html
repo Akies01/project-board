@@ -7,10 +7,10 @@
 <body>
 <form th:action="@{|/update/${board.id}|}" method="post" name="updateForm">
     <input type="hidden" name="id" th:value="${board.id}">
-    writer: <input type="text" name="boardWriter" th:value="${board.boardWriter}" readonly><br>
-    title: <input type="text" name="boardTitle" th:value="${board.boardTitle}"><br>
-    pass: <input type="text" name="boardPass" id="board-pass"><br>
-    contents: <textarea name="boardContents" cols="30" rows="10" th:text="${board.boardContents}"></textarea><br>
+    作成者: <input type="text" name="boardWriter" th:value="${board.boardWriter}" readonly><br>
+    タイトル: <input type="text" name="boardTitle" th:value="${board.boardTitle}"><br>
+    パソワード: <input type="text" name="boardPass" id="board-pass"><br>
+    内容: <textarea name="boardContents" cols="30" rows="10" th:text="${board.boardContents}"></textarea><br>
     <input type="button" value="修整" onclick="board_update()">
 </form>
 </body>

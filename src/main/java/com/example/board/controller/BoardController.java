@@ -3,8 +3,10 @@ package com.example.board.controller;
 import com.example.board.dto.BoardDTO;
 import com.example.board.dto.CommentDTO;
 import com.example.board.dto.PageDTO;
+import com.example.board.dto.UserDTO;
 import com.example.board.service.BoardService;
 import com.example.board.service.CommentService;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,10 +16,11 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-
 public class BoardController {
+
     private final BoardService boardService;
     private final CommentService commentService;
+    private final HttpSession httpSession; // HttpSession 주입
 
     // セーブ
     @GetMapping("/save")
@@ -27,10 +30,8 @@ public class BoardController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute BoardDTO boardDTO) {
-        // board test
-        // System.out.println("boardDTO = " + boardDTO);
         boardService.save(boardDTO);
-        return "redirect:/list";
+        return "redirect:/paging";
     }
 
     // リスト
@@ -38,21 +39,19 @@ public class BoardController {
     public String findAll(Model model) {
         List<BoardDTO> boardDTOList = boardService.findAll();
         model.addAttribute("boardList", boardDTOList);
-        // list test
-        // System.out.println("boardDTOList = " + boardDTOList);
         return "list";
     }
 
     // 内容
     @GetMapping("/{id}")
     public String findById(@PathVariable("id") Long id, Model model) {
-        // 照会数処理
+
         boardService.updateHits(id);
-        // 詳細内容
+
         BoardDTO boardDTO = boardService.findById(id);
         model.addAttribute("board", boardDTO);
-        // detail test
-        // System.out.println("boardDTO = " + boardDTO);
+
+
         List<CommentDTO> commentDTOList = commentService.findAll(id);
         model.addAttribute("commentList", commentDTOList);
         return "detail";
@@ -71,22 +70,34 @@ public class BoardController {
         boardService.update(boardDTO);
         BoardDTO dto = boardService.findById(boardDTO.getId());
         model.addAttribute("board", dto);
-        return "redirect:/list";
+        return "redirect:/paging";
     }
 
     // 削除
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id) {
-        boardService.delete(id);
-        return "redirect:/list";
+    public String delete(@PathVariable("id") Long id, Model model) {
+        // 現在ログインしているユーザー情報を取得
+        UserDTO loggedInUser = (UserDTO) httpSession.getAttribute("loggedInUser");
+
+        // 投稿情報を取得
+        BoardDTO boardDTO = boardService.findById(id);
+
+        // ログインしているユーザーが投稿者と一致しているか確認
+        if (loggedInUser != null && boardDTO.getBoardWriter().equals(loggedInUser.getUsername())) {
+            // 投稿者と一致すれば削除を実行
+            boardService.delete(id);
+            return "redirect:/paging";
+        } else {
+            // 投稿者と一致しない場合、権限なし処理
+            model.addAttribute("errorMessage", "削除権限がありません。");
+            return "error/unauthorized";
+        }
     }
 
-    //ページング
+    // ページング
     @GetMapping("/paging")
-    public String pagingList(Model model, @RequestParam(value = "page", required = false, defaultValue = "1")int page) {
-        // System.out.println("page = " + page);
+    public String pagingList(Model model, @RequestParam(value = "page", required = false, defaultValue = "1") int page) {
         List<BoardDTO> pagingList = boardService.pagingList(page);
-        // System.out.println("pagingList = " + pagingList);
         PageDTO PageDTO = boardService.pagingParam(page);
         model.addAttribute("boardList", pagingList);
         model.addAttribute("paging", PageDTO);
