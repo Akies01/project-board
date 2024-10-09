@@ -48,8 +48,9 @@ public class UserController {
     public String loginUser(UserDTO userDTO, Model model, HttpSession session) {
         // 使用者照会
         UserDTO existingUser = userService.findByUsername(userDTO.getUsername());
-        // パスワード確認
-        if (existingUser != null && existingUser.getPassword().equals(userDTO.getPassword())) {
+
+        // パスワード確認 (BCryptによる検証)
+        if (existingUser != null && userService.checkPassword(userDTO.getPassword(), existingUser.getPassword())) {
             session.setAttribute("loggedInUser", existingUser);
             return "redirect:/";
         } else {
